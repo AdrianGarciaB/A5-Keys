@@ -4,19 +4,13 @@ import javax.crypto.SecretKey;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException {
+    public static void main(String[] args) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, SignatureException, InvalidKeyException {
         exercicio4();
     }
 
@@ -63,7 +57,7 @@ public class Main {
         System.out.println(textodesencriptado);
     }
 
-    private static void exercicio4() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException {
+    private static void exercicio4() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, SignatureException, InvalidKeyException {
         FileInputStream is = new FileInputStream("data/.keystore");
 
         KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -97,24 +91,11 @@ public class Main {
 
         System.out.println(clausAsimetriques.getPublicKey(keystore, "mykey", ""));
 
+        byte[] firma = clausAsimetriques.getSignature("Hello world sign!", (PrivateKey) keystore.getKey("mykey", password.toCharArray()));
+        System.out.println("Firma: " + Base64.getEncoder().encodeToString(firma));
+
+        
 
     }
 
-}
-
-class Persona<String>{
-    private String nombre;
-    String apellidos;
-
-    public Persona(){
-        nombre = (String) "java";
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getApellidos() {
-        return apellidos;
-    }
 }
