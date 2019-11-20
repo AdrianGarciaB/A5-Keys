@@ -9,9 +9,16 @@ import java.security.cert.CertificateException;
 import java.util.*;
 
 public class Main {
+    /*
 
+    Ejercicios de la practica 5:
+        El metodo exercicio4_1 corresponde al punto 1 de la practica.
+        El metodo exercicio4_2 corresponde al punto 2 de la practica.
+
+     */
     public static void main(String[] args) throws IOException, CertificateException, NoSuchAlgorithmException, KeyStoreException, UnrecoverableKeyException, SignatureException, InvalidKeyException {
-        exercicio4();
+        exercicio4_1();
+        exercicio4_2();
     }
 
     private static void exercicio1(){
@@ -57,7 +64,7 @@ public class Main {
         System.out.println(textodesencriptado);
     }
 
-    private static void exercicio4() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, SignatureException, InvalidKeyException {
+    private static void exercicio4_1() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableKeyException, SignatureException, InvalidKeyException {
         FileInputStream is = new FileInputStream("data/.keystore");
 
         KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -71,6 +78,7 @@ public class Main {
         Collections.list(keystore.aliases()).forEach(s -> {
             System.out.print(s + " ");
         });
+        System.out.println();
 
         //System.out.println("\nCertificat de " + keystore.aliases().nextElement() +": " + keystore.getCertificate(keystore.aliases().nextElement()));
         System.out.println("Algoritmo de cifrado: " + keystore.getKey(keystore.aliases().nextElement(), password.toCharArray()).getAlgorithm());
@@ -89,13 +97,31 @@ public class Main {
         ClausAsimetriques clausAsimetriques = new ClausAsimetriques(1024);
         //System.out.println(clausAsimetriques.getPublicKey("/home/dam2a/public.cer"));
 
-        System.out.println(clausAsimetriques.getPublicKey(keystore, "mykey", ""));
+        PublicKey mykey = clausAsimetriques.getPublicKey(keystore, "mykey", "");
+        System.out.println(mykey);
 
         byte[] firma = clausAsimetriques.getSignature("Hello world sign!", (PrivateKey) keystore.getKey("mykey", password.toCharArray()));
         System.out.println("Firma: " + Base64.getEncoder().encodeToString(firma));
 
-        
+        boolean firmavalida = clausAsimetriques.verifySignature("Hello world sign!", firma, mykey);
+        System.out.println("La firma " + (firmavalida ? "es valida.":"no es valida."));
 
     }
+    private static void exercicio4_2() throws NoSuchAlgorithmException {
+
+        ClausEmbolcallades clausEmbolcalladesA = new ClausEmbolcallades();
+        ClausEmbolcallades clausEmbolcalladesB = new ClausEmbolcallades();
+        clausEmbolcalladesA.generateKeys();
+        clausEmbolcalladesB.generateKeys();
+
+        String mensaje = "Mensaje secreto para B";
+        byte[][] mensajeparaB = clausEmbolcalladesA.encryptWrappedData(mensaje.getBytes(), clausEmbolcalladesB.getPublicKey());
+
+        String mensajeDescodificado = new String(clausEmbolcalladesB.decryptWrappedData(mensajeparaB));
+        System.out.println(mensajeDescodificado);
+
+
+    }
+
 
 }

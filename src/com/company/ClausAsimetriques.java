@@ -85,8 +85,14 @@ public class ClausAsimetriques {
         signature.initSign(privateKey);
         signature.update(datos.getBytes());
         byte[] signaturebyte = signature.sign();
-
         return signaturebyte;
+    }
+
+    public boolean verifySignature(String datos, byte[] signaturebyte, PublicKey publicKey) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        Signature signature = Signature.getInstance("SHA256WithDSA");
+        signature.initVerify(publicKey);
+        signature.update(datos.getBytes());
+        return signature.verify(signaturebyte);
     }
 
 
