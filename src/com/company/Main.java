@@ -21,37 +21,6 @@ public class Main {
         exercicio4_2();
     }
 
-    private static void exercicio1(){
-        String mensajesecreto = "hola que tal!!!";
-        ClausSimetriques.getInstance().setClau("hola",256);
-        byte[] mensajeencriptado = ClausSimetriques.getInstance().encryptData(mensajesecreto.getBytes());
-
-        ClausSimetriques.getInstance().setClau("hola2",256);
-
-        byte[] mensajedesencriptado = ClausSimetriques.getInstance().decryptData(mensajeencriptado);
-        if (mensajedesencriptado != null) System.out.println(new String(mensajedesencriptado));
-    }
-
-    private static void exercicio2() throws IOException {
-        byte[] fileencrypted = Files.readAllBytes(Paths.get("data/textamagat"));
-
-        String clave;
-        String mensaje;
-        BufferedReader bufferedReader = new BufferedReader(new FileReader("data/clausA4.txt"));
-        while ((clave = bufferedReader.readLine()) != null) {
-            int keySize[] = new int[]{128, 192, 256};
-            for (int i = 0; i < 3; i++) {
-                ClausSimetriques.getInstance().setClau(clave, keySize[i]);
-                if (ClausSimetriques.getInstance().decryptData(fileencrypted) != null) {
-                    System.out.println("POSIBLE CLAVE ENCONTRADA: " + clave);
-                    System.out.println("TAMAÑO DE LA CLAVE: " + keySize[i]);
-                    System.out.println("MENSAJE: " + new String(ClausSimetriques.getInstance().decryptData(fileencrypted), "UTF8"));
-                }
-            }
-        }
-
-    }
-
     private static void exercicio3(){
         Scanner in = new Scanner(System.in);
 
